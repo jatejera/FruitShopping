@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+	<link href="css/fruit-bowl-app.css" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+
+	<div id="menu">
+
+
+
+		<button onclick="randomFruit()">Random Fruit</button>
+		<select id="selectFruit" onchange="addFruit()">
+		</select>
+
+		<ul id="ulFruit"></ul>
+
+		<h2>Total: $<span id="totalCost">0.00</span></h2>
+
+
+
+	</div>
+
+	<div id="receipt">
+		Receipt Goes Here
+
+	</div>
+
+	<div id="container">
+
+
+
+		<div id="demo">
+
+		</div>
+
+
+	</div>
+
+
+</body>
+
+<script>
+	var selection = "";
+	var ulselection = "";
+	var fruitImg = "";
+	var addCost = 0;
+
+	var xhr = new XMLHttpRequest();
+	var fruits = [];
+
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+
+			fruits = JSON.parse(this.responseText);
+
+			for (var i = 0; i < fruits.length; i++) {
+
+				//	selection += `<option value="${fruits[i].fruit}" cost="${fruits[i].Price}" onchange="addFruit()">${fruits[i].fruit}</option>
+				//`;
+
+				ulselection += `<li value="${fruits[i].fruit}" cost="${fruits[i].Price}" id="${fruits[i].fruit}" onclick="addFruit2()">${fruits[i].fruit} - $${fruits[i].Price}</li>
+			`;
+
+			}
+			selectFruit.innerHTML = selection;
+			ulFruit.innerHTML = ulselection;
+
+
+		}
+
+
+	}
+	xhr.open("GET", "js/fruit-bowl-app.js", true);
+	xhr.send();
+
+	function addFruit() {
+		var fruitID = event.target.value;
+		demo.innerHTML += `<img src="images/fruit/${fruitID}.png">`;
+		//addCost += parseFloat(fruits[fruitID].Price);
+		alert(event.target);
+		//	totalCost.innerHTML = addCost.toPrecision(4);
+	}
+
+	function addFruit2() {
+		var fruitID = event.target.id;
+		demo.innerHTML += `<img src="images/fruit/${fruitID}.png">`;
+		addCost += parseFloat(fruits[event.target.value].Price);
+		totalCost.innerHTML = addCost.toPrecision(4);
+		addToReceipt(fruitID);
+	}
+
+	function randomFruit() {
+		var randFruit = Math.floor(Math.random() * fruits.length);
+		var fruitID = fruits[randFruit].fruit;
+		demo.innerHTML += `<img src="images/fruit/${fruits[randFruit].fruit}.png">`;
+		addCost += parseFloat(fruits[randFruit].Price);
+		totalCost.innerHTML = addCost.toPrecision(4);
+		addToReceipt(fruitID);
+
+	}
+
+	
+	var fruitRegister = [];
+
+	function addToReceipt(fruitID) {
+		
+		var fruitCount = 0;
+		fruitRegister.push(fruitID);
+		console.log(fruitRegister)
+		checkCount(fruitRegister);
+		
+
+		function checkCount() {
+			
+			for (var i = 0; i < fruitRegister.length; i++) {
+				
+				if (fruitID == fruitRegister[i]) {
+					fruitCount++;
+				}
+				
+			}
+			if (fruitCount <= 1){
+				
+					receipt.innerHTML += `<h3 style="width:100%;">${fruitID} x <span id="${fruitID}1"></span></h3>`
+				}
+			
+			var costOfFruit = document.getElementById(`${fruitID}1`);
+			
+			costOfFruit.innerHTML = fruitCount;
+			//console.log(fruitCount);
+			
+		}
+		;
+
+
+	}
+
+</script>
+
+</html>
